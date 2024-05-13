@@ -1,0 +1,6 @@
+# Save the values of W1, b1, W2, b2 in file
+# Select 50 images to rotate through for animation
+# Each image can take 100 frames
+# Process each 50 image X/Y to generate Z1, A1, Z2, A2, Y
+# Animate the color of each object depending upone the values
+
