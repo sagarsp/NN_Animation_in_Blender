@@ -220,4 +220,10 @@ def test_predictions(index, W1, b1, W2, b2, show_image=False):
 
 W1, b1, W2, b2 = gradient_descent(X_train, Y_train, 0.1, 500)
 
+for index in range(50):
+    Z1, A1, Z2, A2 = forward_prop(W1, b1, W2, b2, X_train[:, index, None])
+    np.save("inputs.npy", X_train[:, index, None])
+    np.save("outputs.npy", A2)
+    np.save("weights1.npy", W1)
+    np.save("activations1.npy", A1)
 
