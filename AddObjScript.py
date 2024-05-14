@@ -1,25 +1,40 @@
 import bpy
 import math
-
+import numpy as np
 
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 
-frame_count = 500
+images = 50
+frames_per_images = 10
+img_dim_h = 28
+img_dim_v = 28
+nn_l1 = 10
+nn_l2 = 10
+
+
+frame_count = images*frames_per_images
 bpy.context.scene.frame_end = frame_count
 
+inputs = np.load("/home/sagar/Blender_work/mnist_nn_train/inputs.npy")
+W1 = np.load("/home/sagar/Blender_work/mnist_nn_train/weights1.npy")
+A1 = np.load("/home/sagar/Blender_work/mnist_nn_train/activations1.npy")
+A2 = np.load("/home/sagar/Blender_work/mnist_nn_train/outputs.npy")
+
+print(np.shape(inputs))
+print(np.shape(W1))
+print(np.shape(A1))
+print(np.shape(A2))
 # Add cube in python
-for i in range(1,29):
-    for j in range(1,29):
+for i in range(0,img_dim_v):
+    for j in range(0,img_dim_h):
         x_i = 0
-        y_i = 28 - (i*2)
-        z_i = 28 - (j*2)
+        y_i = img_dim_h - (j*2)
+        z_i = img_dim_v - (i*2)
         
         bpy.ops.mesh.primitive_plane_add(size=1.5,location=(x_i,y_i,z_i),rotation=(0,3.14/2,0))
         #bpy.ops.mesh.primitive_cube_add(size=1.5,location=(x_i,y_i,z_i))
         cb = bpy.context.active_object
-        print(cb)
-        
 
 
 #bpy.ops.mesh.primitive_uv_sphere_add(radius=1, enter_editmode=False, align='WORLD', location=(19.8441, -2.59942, -0.597318), scale=(1, 1, 1))
