@@ -16,15 +16,17 @@ nn_l2 = 10
 frame_count = images*frames_per_images
 bpy.context.scene.frame_end = frame_count
 
-inputs = np.load("/home/sagar/Blender_work/mnist_nn_train/inputs.npy")
-W1 = np.load("/home/sagar/Blender_work/mnist_nn_train/weights1.npy")
-A1 = np.load("/home/sagar/Blender_work/mnist_nn_train/activations1.npy")
-A2 = np.load("/home/sagar/Blender_work/mnist_nn_train/outputs.npy")
+X_imgs = np.load("/home/sagar/Blender_work/mnist_nn_train/dump_data/inputs.npy")
+A2_50 = np.load("/home/sagar/Blender_work/mnist_nn_train/dump_data/outputs.npy")
+W1_mult_X = np.load("/home/sagar/Blender_work/mnist_nn_train/dump_data/weights1.npy")
+W2_mult_A1 = np.load("/home/sagar/Blender_work/mnist_nn_train/dump_data/weights2.npy")
+A1_50 = np.load("/home/sagar/Blender_work/mnist_nn_train/dump_data/activations1.npy")
 
-print(np.shape(inputs))
-print(np.shape(W1))
-print(np.shape(A1))
-print(np.shape(A2))
+print(np.shape(X_imgs))
+print(np.shape(A2_50))
+print(np.shape(W1_mult_X))
+print(np.shape(W2_mult_A1))
+print(np.shape(A1_50))
 # Add cube in python
 for i in range(0,img_dim_v):
     for j in range(0,img_dim_h):

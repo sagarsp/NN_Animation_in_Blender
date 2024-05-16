@@ -217,13 +217,36 @@ def test_predictions(index, W1, b1, W2, b2, show_image=False):
         plt.imshow(current_image, interpolation='nearest')
         plt.show()
 
-
 W1, b1, W2, b2 = gradient_descent(X_train, Y_train, 0.1, 500)
+np.save("/home/sagar/Blender_work/mnist_nn_train/dump_data/W1.npy",W1)
+np.save("/home/sagar/Blender_work/mnist_nn_train/dump_data/W2.npy",W2)
+np.save("/home/sagar/Blender_work/mnist_nn_train/dump_data/b1.npy",b1)
+np.save("/home/sagar/Blender_work/mnist_nn_train/dump_data/b2.npy",b2)
 
-for index in range(50):
-    Z1, A1, Z2, A2 = forward_prop(W1, b1, W2, b2, X_train[:, index, None])
-    np.save("inputs.npy", X_train[:, index, None])
-    np.save("outputs.npy", A2)
-    np.save("weights1.npy", W1)
-    np.save("activations1.npy", A1)
+# Iterate first 50 images and generate required data
+X_imgs = X_train[:,0:50]
+Z1_50, A1_50, Z2_50, A2_50 = forward_prop(W1, b1, W2, b2, X_imgs[:,0:50])
 
+imgs_count = np.shape(X_imgs)[-1]
+W1_mult_X = np.ones(shape=(imgs_count,np.shape(W1)[0],np.shape(W1)[1]))
+W2_mult_A1 = np.ones(shape=(imgs_count,np.shape(W2)[0],np.shape(W2)[1]))
+for idx in range(0,50):
+    A1_50[:,idx] = A1_50[:,idx]/(A1_50[:,idx].max())
+    Z1_n, A1_n, Z2_n, A2_n = forward_prop(W1, b1, W2, b2, X_imgs[:,idx,None])
+    for j in range(0,10):
+        X_img_T = X_imgs[:,idx,None].T
+        A1_n_T = A1_n.T
+        W1_mult_X[idx][j] = W1[j]*(X_img_T)
+        W2_mult_A1[idx][j] = W2[j]*(A1_n_T)
+
+W1_mult_X = np.maximum(W1_mult_X, 0)
+W1_mult_X = np.minimum(W1_mult_X, 1)
+W2_mult_A1 = np.maximum(W2_mult_A1, 0)
+W2_mult_A1 = np.minimum(W2_mult_A1, 1)
+
+#Save required data
+np.save("/home/sagar/Blender_work/mnist_nn_train/dump_data/inputs.npy", X_imgs)
+np.save("/home/sagar/Blender_work/mnist_nn_train/dump_data/outputs.npy", A2_50)
+np.save("/home/sagar/Blender_work/mnist_nn_train/dump_data/weights1.npy", W1_mult_X)
+np.save("/home/sagar/Blender_work/mnist_nn_train/dump_data/weights2.npy", W2_mult_A1)
+np.save("/home/sagar/Blender_work/mnist_nn_train/dump_data/activations1.npy", A1_50)
