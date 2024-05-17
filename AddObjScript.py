@@ -46,30 +46,38 @@ X_imgs_T = X_imgs.T
 A1_50_T = A1_50.T
 A2_50_T = A2_50.T
 
+
 ## Copied from https://github.com/DanieliusKr/neural-network-blender/blob/main/blender_script.py
 def set_material_colors(obj, values, frame_num):
     # Create a new material for the object
     mat = bpy.data.materials.new(name="ColorMat")
+    mat.use_nodes = True
+    emmNode = mat.node_tree.nodes.new(type="ShaderNodeEmission")
+    in_1 = mat.node_tree.nodes["Material Output"].inputs["Surface"]
+    out_1 = emmNode.outputs[0]
+    #out_1 = mat.node_tree.nodes["Emission"].outputs[0]
+
+    mat.node_tree.links.new(in_1,out_1)
+    #bpy.data.objects[“Cube”].active_material = bpy.data.materials[matName]
+    ###
     obj.data.materials.append(mat)
     
     # Loop through the values and set the material color for each one
     for i, val in enumerate(values):
         # Create a new color and set it on the material
         color = (val, val, val, 1.0) 
-        mat.diffuse_color = color
-        mat.use_nodes = True
-        emmNode = mat.node_tree.nodes.new(type="ShaderNodeEmission")
-        #print(mat.node_tree.nodes)
-        print(emmNode)
-        print("\n")
+        #mat.diffuse_color = color
         emmNode.inputs[0].default_value = (val,val,val,val)
+        #mat.node_tree.nodes["Emission"].inputs[0].default_value = (val,val,val,val)
+        #mat.node_tree.nodes["Emission"].inputs[1].default_value = 5*val
         emmNode.inputs[1].default_value = 3*val
-
-        
         # Insert a keyframe for the material color every frame_num frames
         frame = i * frame_num
-        mat.keyframe_insert(data_path="diffuse_color", frame=frame)
-        #mat.node_tree.nodes['Emission'].inputs[1].default_value.keyframe_insert(data_path="default_value", frame=frame)
+        #mat.keyframe_insert(data_path="diffuse_color", frame=frame)
+        emmNode.inputs[0].keyframe_insert(data_path="default_value", frame=frame)
+        emmNode.inputs[1].keyframe_insert(data_path="default_value", frame=frame)
+        #mat.node_tree.nodes["Emission"].inputs[0].keyframe_insert(data_path="default_value", frame=frame)
+        #mat.node_tree.nodes["Emission"].inputs[1].keyframe_insert(data_path="default_value", frame=frame)
 
 def create_plane_grid(n, colours, spacing, size, x_position, delay):
     plane_locations = []
@@ -175,13 +183,14 @@ x_i3 = 100
 radius_of_spread = 21
 radius_of_neuron_sphere = 1
 neurons_level_2 = 10
-#SAGAR# plane_locations = create_plane_grid((img_dim_v,img_dim_h), X_imgs_T, 2, 1.5, x_i1, 0)
+plane_locations = create_plane_grid((img_dim_v,img_dim_h), X_imgs_T, 2, 1.5, x_i1, 0)
 layer1_neurons_locations = create_neurons_grid([nn_l1], A1_50_T, radius_of_spread, radius_of_neuron_sphere, x_i2,0)
 #layer2_neurons_locations = create_neurons_grid([nn_l2], A2_50_T, radius_of_spread, radius_of_neuron_sphere, x_i3,0)
 cube_locations = create_cube_grid([nn_l2], A2_50_T, 4, 3, x_i3,0)
 
 #SAGAR# create_curves_between_points(plane_locations, layer1_neurons_locations, W1_mult_X, 0.05,0)
 #SAGAR# create_curves_between_points(layer1_neurons_locations, cube_locations, W1_mult_X, 0.05,0)
+
 
 #Add Empty
 bpy.ops.object.empty_add()
